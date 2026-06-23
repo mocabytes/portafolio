@@ -31,7 +31,7 @@ export interface PersonalInfo {
 export const PERSONAL: PersonalInfo = {
   name: "Maria",
   fullName: "Maria Serrano",
-  email: "maserrano.dev@gmail.com",
+  email: "hola@mariaserrano.tech",
   location: "Venezuela",
   cvPath: "/Maria_Desarrolladora_FullStack.pdf",
   avatar: {
