@@ -1,0 +1,34 @@
+---
+import ProjectCardGrid from "@components/react/ProjectCardGrid.tsx";
+import ProjectLightbox from "@components/react/ProjectLightbox.tsx";
+import { PROJECTS } from "@data/projects";
+---
+
+<section id="proyectos" class="section-wrapper projects-section">
+  <div class="section-heading reveal-item">
+    <h2 class="title-block">
+      <span class="bracket bracket--open" aria-hidden="true">&lt;</span>
+      <span class="title-main">Proyectos</span>
+      <span class="bracket bracket--close" aria-hidden="true">/&gt;</span>
+    </h2>
+  </div>
+
+  <ProjectCardGrid projects={PROJECTS} client:load />
+  <ProjectLightbox projects={PROJECTS} client:load />
+</section>
+
+<style>
+  .projects-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  @media (max-width: 640px) {
+    .projects-section {
+      padding: var(--space-6) var(--space-4);
+    }
+  }
+</style>

@@ -1,0 +1,167 @@
+/* === KEYFRAMES === */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce-subtle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-8px) translateX(4px);
+  }
+  50% {
+    transform: translateY(-4px) translateX(-4px);
+  }
+  75% {
+    transform: translateY(6px) translateX(2px);
+  }
+}
+
+@keyframes bg-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes underline-expand {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* === UTILITY CLASSES === */
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s var(--ease-out-expo) forwards;
+  opacity: 0;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s var(--ease-out-expo) forwards;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s var(--ease-in-out-circ) infinite;
+}
+
+.animate-float {
+  animation: float 20s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.04) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* === SCROLL REVEAL === */
+
+/* Container pattern — children hidden until container scrolls into view */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.5s var(--ease-out-expo),
+    transform 0.5s var(--ease-out-expo);
+}
+
+.stagger-children.revealed > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Self-revealing elements */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s var(--ease-out-expo),
+    transform 0.6s var(--ease-out-expo);
+}
+
+.reveal-item.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays */
+.revealed > .stagger-1 {
+  transition-delay: 0ms;
+}
+.revealed > .stagger-2 {
+  transition-delay: 80ms;
+}
+.revealed > .stagger-3 {
+  transition-delay: 160ms;
+}
+.revealed > .stagger-4 {
+  transition-delay: 240ms;
+}
+.revealed > .stagger-5 {
+  transition-delay: 320ms;
+}
+.revealed > .stagger-6 {
+  transition-delay: 400ms;
+}

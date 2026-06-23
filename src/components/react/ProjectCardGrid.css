@@ -1,0 +1,369 @@
+/* =============================================
+   PROJECT CARD GRID — Archival Gallery
+   ============================================= */
+
+/* ── Grid ── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: clamp(var(--space-5), 3vw, var(--space-8));
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 var(--content-padding);
+}
+
+.gallery-grid.revealed .gallery-card {
+  animation-play-state: running;
+}
+
+/* ── Card ── */
+.gallery-card {
+  --card-index: 0;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: 14px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px) scale(0.97);
+
+  /* Entrance stagger — animation-based with delay */
+  animation: card-entrance 0.6s var(--ease-out-expo) forwards;
+  animation-delay: calc(var(--card-index) * 120ms + 100ms);
+  animation-play-state: paused;
+
+  /* Hover — transition-based, no delay */
+  transition:
+    border-color 0.22s var(--ease-out-quint),
+    box-shadow 0.22s var(--ease-out-quint),
+    transform 0.22s var(--ease-out-quint);
+}
+
+.gallery-card:hover {
+  border-color: var(--card-accent);
+  box-shadow:
+    0 0 0 1px var(--card-accent-muted),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 60px var(--card-accent-muted);
+  transform: translateY(-4px);
+}
+
+@keyframes card-entrance {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Media (16:9 image container) ── */
+.gallery-card__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--color-bg-surface);
+}
+
+.gallery-card__media:focus-visible {
+  outline: 2px solid var(--card-accent);
+  outline-offset: -2px;
+}
+
+.gallery-card__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    transform 0.5s var(--ease-out-quint),
+    filter 0.5s var(--ease-out-quint);
+}
+
+.gallery-card:hover .gallery-card__img {
+  transform: scale(1.04);
+  filter: brightness(1.08);
+}
+
+.gallery-card__img--placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-surface),
+    var(--color-bg-elevated)
+  );
+}
+
+/* ── Media overlay (hover gradient) ── */
+.gallery-card__media-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.15) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out-quint);
+  pointer-events: none;
+}
+
+.gallery-card__media:hover .gallery-card__media-overlay {
+  opacity: 1;
+}
+
+/* ── Status badge ── */
+.gallery-card__status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  z-index: 2;
+  line-height: 1;
+}
+
+.gallery-card__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-dot);
+  box-shadow: 0 0 6px var(--status-glow);
+  flex-shrink: 0;
+}
+
+/* ── Gallery badge (image count) ── */
+.gallery-card__gallery-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px 3px 7px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  z-index: 2;
+  transition: opacity 0.3s var(--ease-out-quint);
+}
+
+.gallery-card__media:not(:hover) .gallery-card__gallery-badge {
+  opacity: 0.6;
+}
+
+/* ── Body ── */
+.gallery-card__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  flex: 1;
+}
+
+.gallery-card__title {
+  font-size: 1.125rem;
+  font-weight: 650;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.gallery-card__desc {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Offscreen clone used for measuring truncation */
+.gallery-card__desc--measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Inline "Ver más / Ver menos" button inside the paragraph */
+.gallery-card__inline-expand {
+  display: inline;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 550;
+  color: var(--card-accent);
+  cursor: pointer;
+  line-height: inherit;
+  vertical-align: baseline;
+  transition: color 0.2s var(--ease-out-quint);
+}
+
+.gallery-card__inline-expand:hover {
+  color: color-mix(in srgb, var(--card-accent) 85%, white);
+}
+
+/* ── Tech pills ── */
+.gallery-card__tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.gallery-card__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  transition:
+    color 0.25s var(--ease-out-quint),
+    background 0.25s var(--ease-out-quint),
+    border-color 0.25s var(--ease-out-quint);
+  line-height: 1;
+}
+
+.gallery-card__pill:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.gallery-card__pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.25s var(--ease-out-quint);
+}
+
+.gallery-card__pill-icon svg {
+  display: block;
+}
+
+.gallery-card__pill:hover .gallery-card__pill-icon {
+  opacity: 1;
+}
+
+/* ── Actions ── */
+.gallery-card__actions {
+  display: flex;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.gallery-card__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 15px;
+  font-size: 0.75rem;
+  font-weight: 550;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border-radius: 8px;
+  transition:
+    background 0.25s var(--ease-out-quint),
+    color 0.25s var(--ease-out-quint),
+    border-color 0.25s var(--ease-out-quint),
+    box-shadow 0.25s var(--ease-out-quint);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.gallery-card__btn--demo {
+  color: var(--color-text-primary);
+  background: var(--card-accent);
+  border: 1px solid var(--card-accent);
+}
+
+.gallery-card__btn--demo:hover {
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--card-accent) 85%, white);
+  box-shadow: 0 0 20px var(--card-accent-muted);
+}
+
+.gallery-card__btn--code {
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gallery-card__btn--code:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+
+@media (max-width: 640px) {
+  .gallery-grid {
+    padding: 0 var(--space-4);
+  }
+
+  .gallery-card__status {
+    top: 8px;
+    right: 8px;
+    padding: 3px 10px 3px 7px;
+    font-size: 0.6rem;
+  }
+
+  .gallery-card__body {
+    padding: var(--space-4);
+  }
+
+  .gallery-card__title {
+    font-size: clamp(0.9375rem, 3vw + 0.15rem, 1.125rem);
+  }
+
+  .gallery-card__desc {
+    font-size: 0.78125rem;
+  }
+
+  .gallery-card__btn {
+    padding: 6px 12px;
+    font-size: 0.6875rem;
+  }
+}

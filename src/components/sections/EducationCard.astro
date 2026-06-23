@@ -1,0 +1,407 @@
+---
+import { EDUCATION, getProgressRingDash } from "@data/education";
+
+const { degree, institution, address, yearRange, status, progress } = EDUCATION;
+const ringDash = getProgressRingDash();
+---
+
+<div class="edu-card reveal-item">
+  <div class="edu-card__bg" aria-hidden="true">
+    <svg
+      class="edu-card__cap"
+      viewBox="0 0 120 120"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M60 20L10 45l50 25 50-25L60 20z"
+        stroke="currentColor"
+        stroke-width="2"
+        fill="none"></path>
+      <path
+        d="M60 45v30M35 75l-3 8h56l-3-8"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"></path>
+      <path
+        d="M10 45v20l50 25"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"></path>
+    </svg>
+  </div>
+
+  <div class="edu-card__inner">
+    <div class="edu-info">
+      <h3 class="edu-degree">{degree}</h3>
+      <div class="edu-institution-row">
+        <span class="edu-institution">{institution}</span>
+      </div>
+      <span class="edu-address">{address}</span>
+      <div class="edu-meta">
+        <span class="edu-year">{yearRange}</span>
+        <span class="edu-status">
+          <span class="edu-status__dot" aria-hidden="true"></span>
+          {status}
+        </span>
+      </div>
+    </div>
+
+    <div class="edu-highlight">
+      <div class="edu-gpa-ring">
+        <svg class="edu-gpa-ring__svg" viewBox="0 0 100 100" aria-hidden="true">
+          <circle
+            class="edu-gpa-ring__track"
+            cx="50"
+            cy="50"
+            r="44"
+            fill="none"
+            stroke-width="3"></circle>
+          <circle
+            class="edu-gpa-ring__fill"
+            cx="50"
+            cy="50"
+            r="44"
+            fill="none"
+            stroke-width="3"
+            stroke-dasharray={ringDash.circumference.toFixed(2)}
+            stroke-dashoffset={ringDash.offset.toFixed(2)}
+            stroke-linecap="round"></circle>
+        </svg>
+        <div class="edu-gpa-ring__content">
+          <span class="edu-gpa-ring__value">{progress.value}</span>
+          <span class="edu-gpa-ring__label">{progress.label}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="edu-card__shimmer" aria-hidden="true"></div>
+</div>
+
+<style>
+  .edu-card {
+    position: relative;
+    width: 100%;
+    max-width: 780px;
+    background: rgb(19 19 23 / 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--color-border-default);
+    border-radius: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    transition:
+      opacity 0.8s var(--ease-out-expo),
+      transform 0.8s var(--ease-out-expo),
+      border-color 0.5s var(--ease-out-quint),
+      box-shadow 0.5s var(--ease-out-quint);
+    transition-delay: 0.3s;
+  }
+
+  .edu-card.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .edu-card:hover {
+    border-color: rgb(139 92 246 / 0.25);
+    box-shadow:
+      0 8px 40px rgb(0 0 0 / 0.45),
+      0 0 60px rgb(139 92 246 / 0.06);
+    transform: translateY(-3px);
+  }
+
+  .edu-card__bg {
+    position: absolute;
+    top: clamp(-60px, -8vw, -20px);
+    right: clamp(-40px, -5vw, -10px);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    transition: opacity 0.6s var(--ease-out-quint);
+  }
+
+  .edu-card:hover .edu-card__bg {
+    opacity: 0.06;
+  }
+
+  .edu-card__cap {
+    width: clamp(140px, 30vw, 240px);
+    height: clamp(140px, 30vw, 240px);
+    color: var(--color-accent);
+  }
+
+  .edu-card__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(var(--space-6), 4vw, var(--space-12));
+    align-items: center;
+    padding: clamp(var(--space-6), 3vw, var(--space-12));
+  }
+
+  .edu-card__shimmer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-out-quint);
+    background: radial-gradient(
+      ellipse 60% 50% at 30% 50%,
+      rgb(139 92 246 / 0.08) 0%,
+      transparent 60%
+    );
+  }
+
+  .edu-card:hover .edu-card__shimmer {
+    opacity: 1;
+  }
+
+  .edu-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .edu-degree {
+    font-size: clamp(1.0625rem, 2.5vw + 0.2rem, 1.25rem);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .edu-institution-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .edu-institution {
+    font-size: clamp(0.8125rem, 2vw + 0.15rem, 0.9375rem);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .edu-address {
+    font-family: var(--font-mono);
+    font-size: clamp(0.6875rem, 1.5vw + 0.1rem, 0.75rem);
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.02em;
+  }
+
+  .edu-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+  }
+
+  .edu-year {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.03em;
+  }
+
+  .edu-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--color-success);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgb(74 222 128 / 0.08);
+    border: 1px solid rgb(74 222 128 / 0.15);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+  }
+
+  .edu-status__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-success);
+    box-shadow: 0 0 8px rgb(74 222 128 / 0.6);
+    animation: pulse-soft-glow 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse-soft-glow {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 6px rgb(74 222 128 / 0.5);
+    }
+    50% {
+      opacity: 0.6;
+      box-shadow: 0 0 12px rgb(74 222 128 / 0.8);
+    }
+  }
+
+  .edu-highlight {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+    flex-shrink: 0;
+  }
+
+  .edu-gpa-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .edu-gpa-ring__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .edu-gpa-ring__track {
+    stroke: rgb(139 92 246 / 0.12);
+  }
+
+  .edu-gpa-ring__fill {
+    stroke: var(--color-accent);
+    filter: drop-shadow(0 0 6px rgb(139 92 246 / 0.4));
+    transition:
+      stroke-dashoffset 1.2s var(--ease-out-expo),
+      filter 0.6s var(--ease-out-quint);
+  }
+
+  .edu-card:hover .edu-gpa-ring__fill {
+    filter: drop-shadow(0 0 12px rgb(139 92 246 / 0.7));
+  }
+
+  .edu-gpa-ring__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .edu-gpa-ring__value {
+    font-size: clamp(1.4rem, 4vw + 0.2rem, 2rem);
+    font-weight: 800;
+    color: var(--color-accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .edu-gpa-ring__label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .edu-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.625rem 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    background: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background 0.2s var(--ease-out-quint),
+      border-color 0.2s var(--ease-out-quint),
+      transform 0.2s var(--ease-spring),
+      box-shadow 0.2s var(--ease-out-quint);
+    white-space: nowrap;
+  }
+
+  .edu-cta:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgb(139 92 246 / 0.35);
+  }
+
+  .edu-cta:active {
+    transform: scale(0.97);
+  }
+
+  @media (max-width: 640px) {
+    .edu-card__inner {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+      text-align: center;
+    }
+
+    .edu-info {
+      align-items: center;
+    }
+
+    .edu-meta {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .edu-highlight {
+      flex-direction: row;
+      gap: var(--space-6);
+      justify-content: center;
+    }
+
+    .edu-gpa-ring {
+      width: min(100px, 25vw);
+      height: min(100px, 25vw);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .edu-highlight {
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .edu-card {
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .edu-status__dot {
+      animation: none;
+    }
+
+    .edu-gpa-ring__fill {
+      transition: none;
+    }
+  }
+</style>

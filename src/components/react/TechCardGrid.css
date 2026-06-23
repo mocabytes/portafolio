@@ -1,0 +1,198 @@
+/* =============================================
+   TECH CARD GRID
+   ============================================= */
+
+.tech-card-grid-wrapper {
+  width: 100%;
+}
+
+.tech-card-grid {
+  display: grid;
+  /* Usamos auto-fit para colapsar columnas vacías y permitir el centrado exacto */
+  grid-template-columns: repeat(auto-fit, minmax(90px, 120px));
+  gap: clamp(var(--space-2), 1.5vw, var(--space-3));
+  max-width: 1000px;
+  width: 100%;
+  padding: 0 var(--content-padding);
+  justify-content: center; /* Centra las tarjetas horizontalmente dentro del grid */
+  margin: 0 auto 2.5rem auto; /* Centra la grilla completa en el contenedor principal */
+}
+
+/* =============================================
+   CATEGORIES
+   ============================================= */
+
+.tech-category-section {
+  width: 100%;
+  margin-bottom: 2rem; /* Espaciado entre bloques de categorías */
+}
+
+.tech-category-title {
+  font-size: 1rem;
+  color: var(--text-muted, #a0aec0);
+  margin-bottom: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center; /* Centra el texto del título */
+  margin-left: 0; /* Removemos márgenes asimétricos */
+  padding-left: 0;
+  border-left: none; /* Removemos el borde izquierdo para cuidar la simetría central */
+}
+
+/* =============================================
+   CARD WRAPPER — hover elevation + perspective
+   ============================================= */
+
+.tech-card {
+  position: relative;
+  aspect-ratio: 1;
+  perspective: 600px;
+  transform: scale(1) translateY(0);
+  transition:
+    transform 0.45s var(--ease-spring),
+    box-shadow 0.35s var(--ease-out-quint);
+  will-change: transform;
+}
+
+.tech-card:hover {
+  transform: scale(1.04) translateY(-5px);
+}
+
+/* =============================================
+   CARD INNER — glass bg + 3D tilt
+   ============================================= */
+
+.tech-card__inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(var(--space-1), 1vw, var(--space-3));
+  background: rgb(255 255 255 / 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 14px;
+  border: 1px solid rgb(255 255 255 / 0.06);
+  overflow: hidden;
+  z-index: 1;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    border-color 0.35s var(--ease-out-quint),
+    background 0.35s var(--ease-out-quint);
+}
+
+.tech-card:hover .tech-card__inner {
+  border-color: color-mix(in srgb, var(--brand-color) 30%, transparent);
+  background: rgb(255 255 255 / 0.07);
+}
+
+/* =============================================
+   BRAND GLOW — box shadow on hover
+   ============================================= */
+
+.tech-card:hover {
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--brand-color) 18%, transparent),
+    0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+/* =============================================
+   MOUSE SPOTLIGHT — radial light following cursor
+   ============================================= */
+
+.tech-card__spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    circle clamp(80px, 18vw, 140px) at var(--mx) var(--my),
+    color-mix(in srgb, var(--brand-color) 10%, transparent) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out-quint);
+}
+
+.tech-card:hover .tech-card__spotlight {
+  opacity: 1;
+}
+
+.tech-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(32px, 10vw, 48px);
+  height: clamp(32px, 10vw, 48px);
+  flex-shrink: 0;
+}
+
+.tech-card__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* =============================================
+   TECH NAME LABEL
+   ============================================= */
+
+.tech-card__name {
+  font-size: clamp(0.5625rem, 1.8vw + 0.1rem, var(--text-caption));
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-align: center;
+  line-height: 1.2;
+  position: relative;
+  z-index: 3;
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+
+@media (max-width: 480px) {
+  .tech-card-grid {
+    /* Mantenemos auto-fit y fijamos el tope máximo en móviles para asegurar el centrado */
+    grid-template-columns: repeat(auto-fit, minmax(85px, 120px));
+    gap: var(--space-2);
+    padding: 0 var(--space-4);
+    width: 100%;
+  }
+  .tech-category-title {
+    margin-left: 0; /* Asegura el centrado estricto en pantallas pequeñas */
+  }
+}
+
+/* =============================================
+   REDUCED MOTION
+   ============================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-card,
+  .tech-card__inner {
+    transition: none;
+    transform: none;
+    width: 100%;
+    max-width: 120px;
+    aspect-ratio: auto;
+    margin: 0 auto;
+  }
+
+  .tech-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .tech-card:hover .tech-card__inner {
+    background: rgb(255 255 255 / 0.07);
+    border-color: var(--color-border-hover);
+  }
+
+  .tech-card__spotlight {
+    display: none;
+  }
+}

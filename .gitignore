@@ -1,0 +1,33 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+
+# Entorno
+.env
+.env.local
+.env.*.local
+
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Astro
+.astro/
+
+# Vercel
+.vercel/
+
+# Gentle AI
+.atl/
+.agents/
+skills-lock.json
+
+# TypeScript
+*.tsbuildinfo

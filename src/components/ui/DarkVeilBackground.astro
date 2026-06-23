@@ -1,0 +1,50 @@
+---
+import DarkVeil from "@components/react/DarkVeil.tsx";
+
+export interface Props {
+  hueShift?: number;
+  noiseIntensity?: number;
+  scanlineIntensity?: number;
+  speed?: number;
+  scanlineFrequency?: number;
+  warpAmount?: number;
+  resolutionScale?: number;
+}
+
+const {
+  hueShift = 65,
+  noiseIntensity = 0,
+  scanlineIntensity = 0,
+  speed = 1.2,
+  scanlineFrequency = 0,
+  warpAmount = 1,
+  resolutionScale = 1,
+} = Astro.props;
+---
+
+<div class="veil-bg" aria-hidden="true">
+  <DarkVeil
+    hueShift={hueShift}
+    noiseIntensity={noiseIntensity}
+    scanlineIntensity={scanlineIntensity}
+    speed={speed}
+    scanlineFrequency={scanlineFrequency}
+    warpAmount={warpAmount}
+    resolutionScale={resolutionScale}
+    client:load
+  />
+</div>
+
+<style>
+  .veil-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .veil-bg canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none;
+  }
+</style>

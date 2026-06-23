@@ -1,0 +1,195 @@
+---
+import { PERSONAL } from "@data/personal";
+
+const { fullName, jobTitle, tagline, avatar, cvPath } = PERSONAL;
+---
+
+<section id="hero" class="section-wrapper hero-section">
+  <div class="hero-grid">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        {fullName}<br /><span class="hero-title-accent">{jobTitle}</span>
+      </h1>
+      <p class="hero-description">{tagline}</p>
+
+      <div class="hero-actions">
+        <a href="#proyectos" class="btn btn-primary">Ver experiencia</a>
+        <a href="#contacto" class="btn btn-secondary">Contactar</a>
+        <a href={cvPath} class="btn btn-ghost" download>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M8 11L8 1M8 11L5 8M8 11L11 8"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+            <path
+              d="M2 13H14"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"></path>
+          </svg>
+          Descargar CV
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-avatar">
+      <img src={avatar.hero} alt={fullName} width="400" height="400" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(var(--space-8), 4vw, var(--space-12));
+    align-items: stretch;
+    max-width: 1200px;
+    width: 100%;
+    padding: var(--content-padding);
+    animation: fade-in-up 0.8s var(--ease-out-expo) forwards;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+
+  .hero-avatar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .hero-avatar img {
+    object-fit: cover;
+  }
+
+  .hero-title {
+    font-size: var(--text-hero);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    line-height: 0.85;
+    margin: 0;
+  }
+
+  .hero-title-accent {
+    font-size: clamp(1.5rem, 4vw + 0.3rem, 3rem);
+    color: var(--color-accent);
+  }
+
+  .hero-description {
+    font-size: clamp(1rem, 4vw + 0.2rem, 1rem);
+    color: var(--color-text-tertiary);
+    line-height: 1.7;
+    max-width: 40rem;
+    margin: 0;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-5);
+  }
+
+  @media (max-width: 1024px) {
+    .hero-avatar {
+      display: none;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-content {
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 8vw + 0.5rem, 5.5rem);
+    }
+
+    .hero-title-accent {
+      font-size: clamp(2rem, 6vw + 0.3rem, 4rem);
+    }
+
+    .hero-description {
+      font-size: clamp(1rem, 3vw + 0.3rem, 1rem);
+      margin-inline: auto;
+      max-width: 44rem;
+    }
+
+    .hero-actions {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-grid {
+      gap: var(--space-8);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-section {
+      height: 100vh;
+    }
+    .hero-grid {
+      place-items: center;
+    }
+
+    .hero-description {
+      max-width: 30ch;
+    }
+
+    .hero-content {
+      gap: var(--space-4);
+      justify-content: center;
+    }
+
+    .hero-description {
+      font-size: clamp(0.875rem, 3.5vw, 1rem);
+    }
+
+    .btn {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-actions {
+      align-items: center;
+    }
+
+    a {
+      width: 120px;
+      height: 80%;
+      font-size: 0.7rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.3rem, 3.5vw, 2rem);
+    }
+
+    .hero-title-accent {
+      font-size: clamp(1.6rem, 3.5vw, 2rem);
+    }
+  }
+</style>

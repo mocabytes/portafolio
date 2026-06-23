@@ -1,0 +1,69 @@
+---
+export const prerender = true;
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Navbar from "@components/sections/Navbar.astro";
+import HeroSection from "@components/sections/HeroSection.astro";
+import Profile from "@components/sections/Profile.astro";
+import StrengthsSection from "@components/sections/StrengthsSection.astro";
+import ProjectsSection from "@components/sections/ProjectsSection.astro";
+import ContactForm from "@components/react/ContactForm.tsx";
+import SocialCircles from "@components/react/SocialCircles.tsx";
+
+import { PERSONAL } from "@data/personal";
+---
+
+<BaseLayout
+  title={`${PERSONAL.name} — ${PERSONAL.jobTitle}`}
+  description="Desarrollador Full Stack especializado en Aplicaciones Web."
+>
+  <Navbar />
+  <SocialCircles client:load />
+
+  <main class="page-container">
+    <HeroSection />
+    <Profile />
+    <StrengthsSection />
+    <ProjectsSection />
+    <ContactForm client:load />
+  </main>
+</BaseLayout>
+
+<style is:global>
+  /* ---- Page container ---- */
+  .page-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- Section wrapper ---- */
+  .section-wrapper {
+    position: relative;
+    max-width: 1200px;
+    gap: var(--space-16);
+    margin-inline: auto;
+    margin-bottom: 100px;
+    padding: var(--content-padding);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-margin-top: 0.5rem;
+  }
+
+  /* ---- Hero overrides ---- */
+  .hero-section {
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-width: none;
+    margin-inline: 0;
+    padding-block: 0;
+  }
+
+  @media (max-width: 640px) {
+    .section-wrapper {
+      min-height: auto;
+      max-width: 100%;
+      padding-block: var(--space-10);
+    }
+  }
+</style>

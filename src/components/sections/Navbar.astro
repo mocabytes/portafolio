@@ -1,0 +1,634 @@
+---
+import { NAV_LINKS } from "@data/site";
+---
+
+<nav class="nav" aria-label="Navegación principal">
+  <!-- Desktop pill nav (unchanged) -->
+  <div class="nav-inner nav-desktop">
+    <div class="nav-track">
+      {
+        NAV_LINKS.map((link) => (
+          <a href={link.href} class="nav-link" data-section={link.id}>
+            {link.label}
+          </a>
+        ))
+      }
+      <div class="nav-indicator" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Mobile hamburger -->
+  <button
+    class="nav-hamburger"
+    id="nav-hamburger"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+    aria-controls="nav-menu"
+  >
+    <span class="hamburger-line line-1"></span>
+    <span class="hamburger-line line-2"></span>
+    <span class="hamburger-line line-3"></span>
+  </button>
+
+  <!-- Mobile menu overlay -->
+  <div class="nav-menu" id="nav-menu" aria-hidden="true" role="dialog" aria-label="Menú de navegación">
+    <!-- Ambient orbs -->
+    <div class="menu-orb orb-1" aria-hidden="true"></div>
+    <div class="menu-orb orb-2" aria-hidden="true"></div>
+
+    <!-- Grid pattern -->
+    <div class="menu-grid" aria-hidden="true"></div>
+
+    <nav class="nav-menu-content">
+      {
+        NAV_LINKS.map((link, i) => (
+          <a
+            href={link.href}
+            class="nav-menu-link"
+            data-section={link.id}
+            style={`--i: ${i}`}
+          >
+            <span class="menu-link-bar" aria-hidden="true"></span>
+            <span class="menu-link-index" aria-hidden="true">0{i + 1}</span>
+            <span class="menu-link-label">{link.label}</span>
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</nav>
+
+<script>
+  function initNav() {
+    const linksDesktop = document.querySelectorAll<HTMLAnchorElement>(".nav-desktop .nav-link");
+    const linksMobile = document.querySelectorAll<HTMLAnchorElement>(".nav-menu-link");
+    const indicator = document.querySelector<HTMLDivElement>(".nav-indicator");
+    const container = document.querySelector<HTMLElement>(".page-container");
+    const hamburger = document.querySelector<HTMLButtonElement>("#nav-hamburger");
+    const menu = document.querySelector<HTMLDivElement>("#nav-menu");
+
+    if (!container || !indicator) return;
+
+    const sections = [...container.querySelectorAll<HTMLElement>("section[id]")];
+    if (!sections.length) return;
+
+    let activeId = "";
+
+    // ── Desktop indicator ──────────────────────────────────
+    function moveIndicator(link: HTMLAnchorElement | null) {
+      if (!link || !indicator) return;
+      const track = link.parentElement!;
+      const trackRect = track.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+
+      const left = linkRect.left - trackRect.left - 5;
+      const width = linkRect.width - 2;
+
+      indicator.style.width = `${width}px`;
+      indicator.style.transform = `translateX(${left}px)`;
+    }
+
+    function setActive(id: string) {
+      if (id === activeId) return;
+      activeId = id;
+
+      if (indicator) indicator.style.opacity = "1";
+
+      let activeLink: HTMLAnchorElement | null = null;
+      linksDesktop.forEach((l) => {
+        if (l.dataset.section === id) {
+          l.setAttribute("aria-current", "true");
+          activeLink = l;
+        } else {
+          l.removeAttribute("aria-current");
+        }
+      });
+
+      linksMobile.forEach((l) => {
+        l.classList.toggle("active", l.dataset.section === id);
+      });
+
+      moveIndicator(activeLink);
+    }
+
+    // IntersectionObserver for scroll-spy
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let topEntry: IntersectionObserverEntry | null = null;
+        let minTop = Infinity;
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.boundingClientRect.top < minTop) {
+            minTop = entry.boundingClientRect.top;
+            topEntry = entry;
+          }
+        }
+        if (topEntry) setActive(topEntry.target.id);
+      },
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0 },
+    );
+
+    for (const section of sections) observer.observe(section);
+
+    // ── Desktop link clicks ───────────────────────────────
+    linksDesktop.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = link.dataset.section;
+        if (!id) return;
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      });
+    });
+
+    // ── Mobile menu ───────────────────────────────────────
+    if (!hamburger || !menu) return;
+
+    const hamburgerBtn = hamburger;
+    const menuEl = menu;
+    let menuOpen = false;
+
+    function openMenu() {
+      menuOpen = true;
+      hamburgerBtn.setAttribute("aria-expanded", "true");
+      hamburgerBtn.setAttribute("aria-label", "Cerrar menú");
+      hamburgerBtn.classList.add("open");
+      menuEl.classList.add("open");
+      menuEl.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+
+      // Stagger link entrances by resetting animation
+      const links = menuEl.querySelectorAll<HTMLAnchorElement>(".nav-menu-link");
+      links.forEach((link) => {
+        link.classList.remove("animate");
+        void (link as HTMLElement).offsetWidth; // force reflow
+        link.classList.add("animate");
+      });
+
+      setTimeout(() => {
+        const first = menuEl.querySelector<HTMLAnchorElement>(".nav-menu-link");
+        first?.focus();
+      }, 400);
+    }
+
+    function closeMenu() {
+      menuOpen = false;
+      hamburgerBtn.setAttribute("aria-expanded", "false");
+      hamburgerBtn.setAttribute("aria-label", "Abrir menú");
+      hamburgerBtn.classList.remove("open");
+      menuEl.classList.remove("open");
+      menuEl.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      hamburgerBtn.focus();
+    }
+
+    hamburgerBtn.addEventListener("click", () => {
+      menuOpen ? closeMenu() : openMenu();
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menuOpen) closeMenu();
+    });
+
+    // Close and scroll on mobile link click
+    linksMobile.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = link.dataset.section;
+        if (!id) return;
+        closeMenu();
+        // Single frame delay — enough for display:none to paint, not enough to feel sluggish
+        requestAnimationFrame(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        });
+      });
+    });
+
+    // ── Initial state ─────────────────────────────────────
+    const hash = window.location.hash.replace("#", "");
+    if (hash && sections.some((s) => s.id === hash)) {
+      setActive(hash);
+      requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView());
+    } else {
+      setActive(sections[0].id);
+    }
+
+    document.fonts.ready.then(() => {
+      requestAnimationFrame(() =>
+        moveIndicator(
+          document.querySelector<HTMLAnchorElement>('.nav-desktop .nav-link[aria-current="true"]'),
+        ),
+      );
+    });
+  }
+
+  setTimeout(initNav, 0);
+</script>
+
+<style>
+  /* ════════════════════════════════════════════════════════
+     DESKTOP NAV (unchanged)
+     ════════════════════════════════════════════════════════ */
+  .nav {
+    position: fixed;
+    top: 1.5rem;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .nav-track {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+    padding: 5px;
+    background: rgba(98, 0, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    pointer-events: auto;
+  }
+
+  .nav-link {
+    position: relative;
+    padding: 0.5rem 1.125rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgb(255 255 255 / 0.8);
+    text-decoration: none;
+    border-radius: 12px;
+    transition: color 0.3s var(--ease-out-quint);
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .nav-link:hover {
+    color: var(--bg-primary);
+  }
+
+  .nav-link[aria-current="true"] {
+    color: #000000;
+  }
+
+  .nav-indicator {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 12px;
+    border: 1px solid rgb(255 255 255 / 0.05);
+    opacity: 0;
+    transition:
+      transform 0.3s var(--ease-out-quint),
+      width 0.3s var(--ease-out-quint),
+      opacity 0.12s var(--ease-out-quint);
+    pointer-events: none;
+  }
+
+  /* ════════════════════════════════════════════════════════
+     HAMBURGER BUTTON
+     ════════════════════════════════════════════════════════ */
+  .nav-hamburger {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 120;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-radius: 50%;
+    pointer-events: auto;
+    transition: box-shadow 0.4s var(--ease-out-quint);
+  }
+
+  /* Glow ring on open */
+  .nav-hamburger::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-accent);
+    opacity: 0;
+    transform: scale(0.8);
+    transition:
+      opacity 0.5s var(--ease-out-quint),
+      transform 0.5s var(--ease-out-quint);
+    pointer-events: none;
+  }
+
+  .nav-hamburger.open::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .nav-hamburger:hover::before {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  .hamburger-line {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background: white;
+    border-radius: 1px;
+    transition:
+      transform 0.4s var(--ease-spring),
+      opacity 0.3s var(--ease-out-quint),
+      width 0.3s var(--ease-out-quint);
+    transform-origin: center;
+  }
+
+  /* Line 1 stretches on hover */
+  .nav-hamburger:hover .hamburger-line { width: 24px; }
+
+  /* Animate to X */
+  .nav-hamburger.open .line-1 {
+    transform: translateY(5.5px) rotate(45deg);
+    width: 22px;
+  }
+
+  .nav-hamburger.open .line-2 {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .nav-hamburger.open .line-3 {
+    transform: translateY(-5.5px) rotate(-45deg);
+    width: 22px;
+  }
+
+  /* ════════════════════════════════════════════════════════
+     MOBILE MENU OVERLAY
+     ════════════════════════════════════════════════════════ */
+  .nav-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: #0a0a0f;
+    overflow: hidden;
+  }
+
+  .nav-menu.open {
+    display: block;
+    pointer-events: auto;
+    animation: menuReveal 0.5s var(--ease-out-expo) both;
+  }
+
+  @keyframes menuReveal {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Ambient orbs ─────────────────────────────────── */
+  .menu-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-menu.open .menu-orb {
+    animation: orbAppear 1s var(--ease-out-expo) 0.2s both;
+  }
+
+  @keyframes orbAppear {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .orb-1 {
+    width: 300px;
+    height: 300px;
+    background: #8b5cf6;
+    top: -10%;
+    left: -20%;
+    animation: orbDrift1 12s ease-in-out infinite;
+  }
+
+  .orb-2 {
+    width: 250px;
+    height: 250px;
+    background: #60a5fa;
+    bottom: -15%;
+    right: -15%;
+    animation: orbDrift2 14s ease-in-out infinite;
+  }
+
+  @keyframes orbDrift1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25%      { transform: translate(60px, 40px) scale(1.15); }
+    50%      { transform: translate(-20px, 80px) scale(0.9); }
+    75%      { transform: translate(40px, -20px) scale(1.1); }
+  }
+
+  @keyframes orbDrift2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(-50px, -30px) scale(1.2); }
+    66%      { transform: translate(30px, -60px) scale(0.85); }
+  }
+
+  /* ── Grid pattern ─────────────────────────────────── */
+  .menu-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgb(139 92 246 / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(139 92 246 / 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black 20%, transparent 70%);
+    transition: opacity 0.6s var(--ease-out-quint);
+  }
+
+  .nav-menu.open .menu-grid {
+    opacity: 1;
+    transition-delay: 0.15s;
+  }
+
+  /* ── Links container ──────────────────────────────── */
+  .nav-menu-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--space-1);
+    height: 100%;
+    padding: var(--space-10) var(--space-8);
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .nav-menu-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    width: 100%;
+    padding: var(--space-4) var(--space-5);
+    color: rgb(255 255 255 / 0.45);
+    text-decoration: none;
+    border-radius: 14px;
+    opacity: 0;
+    transform: translateX(-30px) rotateY(15deg);
+    transition:
+      color 0.35s var(--ease-out-quint),
+      background 0.35s var(--ease-out-quint),
+      opacity 0.5s var(--ease-out-quint),
+      transform 0.5s var(--ease-spring);
+  }
+
+  .nav-menu-link.animate {
+    animation: linkEnter 0.6s var(--ease-spring) both;
+    animation-delay: calc(0.08s * var(--i));
+  }
+
+  @keyframes linkEnter {
+    from {
+      opacity: 0;
+      transform: translateX(-30px) rotateY(15deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) rotateY(0deg);
+    }
+  }
+
+  .nav-menu-link:hover,
+  .nav-menu-link:focus-visible,
+  .nav-menu-link.active {
+    color: white;
+    background: rgb(139 92 246 / 0.08);
+  }
+
+  .nav-menu-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* ── Sliding accent bar ───────────────────────────── */
+  .menu-link-bar {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) scaleY(0);
+    width: 3px;
+    height: 60%;
+    background: var(--color-accent);
+    border-radius: 0 4px 4px 0;
+    transition: transform 0.4s var(--ease-spring);
+  }
+
+  .nav-menu-link:hover .menu-link-bar,
+  .nav-menu-link.active .menu-link-bar {
+    transform: translateY(-50%) scaleY(1);
+  }
+
+  /* ── Index number ─────────────────────────────────── */
+  .menu-link-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    opacity: 0.5;
+    min-width: 24px;
+    text-align: right;
+    transition:
+      opacity 0.35s var(--ease-out-quint),
+      transform 0.35s var(--ease-spring);
+  }
+
+  .nav-menu-link:hover .menu-link-index,
+  .nav-menu-link.active .menu-link-index {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+
+  /* ── Label ────────────────────────────────────────── */
+  .menu-link-label {
+    font-family: var(--font-sans);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    transition: transform 0.35s var(--ease-spring);
+  }
+
+  .nav-menu-link:hover .menu-link-label {
+    transform: translateX(4px);
+  }
+
+  /* ════════════════════════════════════════════════════════
+     RESPONSIVE
+     ════════════════════════════════════════════════════════ */
+  @media (min-width: 641px) {
+    .nav-desktop { display: flex; }
+    .nav-menu { display: none !important; }
+  }
+
+  @media (max-width: 640px) {
+    .nav {
+      top: 0;
+      justify-content: flex-end;
+    }
+
+    .nav-desktop { display: none; }
+    .nav-hamburger { display: flex; }
+
+    .orb-1 { width: 200px; height: 200px; top: -5%; left: -30%; }
+    .orb-2 { width: 180px; height: 180px; bottom: -10%; right: -25%; }
+
+    .nav-menu-content {
+      padding: var(--space-8) var(--space-6);
+    }
+
+    .menu-link-label {
+      font-size: 1.25rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .nav-menu-content {
+      padding: var(--space-6) var(--space-5);
+    }
+
+    .menu-link-label {
+      font-size: 1.125rem;
+    }
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-menu.open { animation: none; }
+    .nav-menu.open .menu-orb { animation: none; opacity: 0.3; }
+    .nav-menu-link.animate { animation: none; opacity: 1; transform: none; }
+    .menu-link-bar,
+    .menu-link-index,
+    .menu-link-label { transition: none; }
+    .hamburger-line { transition: none; }
+    .orb-1, .orb-2 { animation: none; }
+  }
+</style>

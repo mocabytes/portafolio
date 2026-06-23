@@ -1,0 +1,82 @@
+/* === DESIGN TOKENS — Premium Dark + Violeta Autoridad === */
+
+:root {
+  /* === BACKGROUNDS === */
+  --color-bg-primary: #efefef;
+  --color-bg-surface: #131317;
+  --color-bg-elevated: #1a1a20;
+  --color-bg-glass: rgb(19 19 23 / 0.75);
+
+  /* === BORDERS === */
+  --color-border-default: rgb(255 255 255 / 0.06);
+  --color-border-hover: rgb(139 92 246 / 0.25);
+  --color-border-active: #8b5cf6;
+
+  /* === TEXT === */
+  --color-text-primary: #efefef;
+  --color-text-secondary: #ababab;
+  --color-text-tertiary: #bbbbbb;
+  --color-text-disabled: #52525b;
+
+  /* === ACCENT — Violeta autoridad === */
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #9777f8;
+  --color-accent-muted: rgb(139 92 246 / 0.12);
+  --color-accent-hover-2: rgba(138, 92, 246, 0.297);
+
+  /* === SEMANTIC === */
+  --color-success: #4ade80;
+  --color-success-muted: rgb(74 222 128 / 0.12);
+  --color-warning: #fbbf24;
+  --color-warning-muted: rgb(251 191 36 / 0.12);
+  --color-error: #f87171;
+  --color-error-muted: rgb(248 113 113 / 0.12);
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 8px 32px rgb(0 0 0 / 0.6);
+
+  /* === SPACING (base 4px) === */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* === TYPOGRAPHY === */
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono:
+    "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+
+  /* === TYPE SCALE — Fluid, no breakpoint stepping === */
+  --text-hero: clamp(2.2rem, 6vw + 0.5rem, 4.5rem);
+  --text-display: clamp(1.8rem, 4.5vw + 0.4rem, 3.8rem);
+  --text-h1: clamp(1.625rem, 2.8vw + 0.5rem, 2.35rem);
+  --text-h2: clamp(1.25rem, 2vw + 0.4rem, 1.75rem);
+  --text-h3: clamp(1.0625rem, 1.2vw + 0.35rem, 1.25rem);
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-caption: 0.75rem;
+  --text-mono: 0.8125rem;
+
+  /* === EASING CURVES === */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* === LAYOUT === */
+  --navbar-height: 3.5rem;
+  --content-max-width: 80rem;
+  --content-padding: var(--space-6);
+}
