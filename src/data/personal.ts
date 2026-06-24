@@ -43,8 +43,7 @@ export const PERSONAL: PersonalInfo = {
     linkedin: "https://linkedin.com/in/macastillejo",
   },
   availability: "Disponible para nuevas oportunidades",
-  tagline:
-    "Desarrolladora Full Stack | Infraestructura de Redes | Estudiante de Ingeniería Informática",
+  tagline: "Construyendo software. Conectando infraestructura.",
   bio: "Soy estudiante de Ingeniería Informática con un perfil híbrido que integra la lógica del desarrollo Full Stack y la gestión de infraestructura de redes. Gracias a mi nivel de inglés C1 certificado, me enfoco en diseñar aplicaciones estructuradas, optimizar flujos operativos y resolver problemas complejos mediante soluciones basadas en datos.",
   terminalTitle: "/mocabyte — bash — 80×24",
   jobTitle: "Desarrolladora Full Stack",
